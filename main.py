@@ -1,12 +1,13 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from simple_settings import settings
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
 
 app = Flask(__name__)
-
-app.config.update(**settings.as_dict())
-
+try:
+    app.config.update(**settings.as_dict())
+except:
+    print ("Please configurate your environment!")
 
 db = SQLAlchemy(app)
 
@@ -17,18 +18,28 @@ class person(db.Model):
     job = db.Column(db.String(45))
 
 
-@app.route("/", methods=["GET","POST"])
+@app.route("/", methods=["POST","GET"])
 def home():
-    return "hello", 200
+    if request.method == "POST":
+        try:
+            personsql = person(name = request.form["name"], age = request.form["age"], job = request.form["job"])
+            db.session.add(personsql)
+            db.session.commit()
+        except Exception as e:
+            return e, 400
+        else:
+            return "adding!!!", 200
+    else:
+        try:
+            people = person.query.all()
+        except Exception as e:
+            return str(e)
+        else: return jsonify({"people":[p.to_json() for p in people]})
+        
+
+    
 
 if __name__ == "__main__":
     db.create_all()
-
-    person.query.delete()
-
-    Van = person(name= "Van", age = 3, job = "ATB")
-    
-    db.session.add(Van)
-    db.session.commit()
 
     app.run()
