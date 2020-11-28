@@ -12,11 +12,10 @@ except:
 db = SQLAlchemy(app)
 
 class person(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    idPerson = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(45), nullable=False)
     age = db.Column(db.Integer, nullable = False)
     job = db.Column(db.String(45))
-
 
 @app.route("/", methods=["POST","GET"])
 def home():
@@ -26,7 +25,7 @@ def home():
             db.session.add(personsql)
             db.session.commit()
         except Exception as e:
-            return e, 400
+            return str(e), 400
         else:
             return "adding!!!", 200
     else:
@@ -34,11 +33,9 @@ def home():
             people = person.query.all()
         except Exception as e:
             return str(e)
-        else: return jsonify({"people":[p.to_json() for p in people]})
+        else:
+            return str(people)
         
-
-    
-
 if __name__ == "__main__":
     db.create_all()
 
