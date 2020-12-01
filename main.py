@@ -1,7 +1,6 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request
 from simple_settings import settings
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.sql import func
 
 app = Flask(__name__)
 try:
@@ -11,32 +10,49 @@ except:
 
 db = SQLAlchemy(app)
 
-class person(db.Model):
-    idPerson = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(45), nullable=False)
-    age = db.Column(db.Integer, nullable = False)
-    job = db.Column(db.String(45))
-
-@app.route("/", methods=["POST","GET"])
-def home():
+@app.route("/person", methods=["POST","GET"])
+def person_fu():
+    from models import person
+    from forms import PersonForm
     if request.method == "POST":
-        try:
-            personsql = person(name = request.form["name"], age = request.form["age"], job = request.form["job"])
+        form = PersonForm(request.form)
+        if form.validate():
+            personsql = person(**form.data)
             db.session.add(personsql)
             db.session.commit()
-        except Exception as e:
-            return str(e), 400
-        else:
             return "adding!!!", 200
+        else:
+            return "Form is not valid!", 400 
     else:
         try:
-            people = person.query.all()
+            quotes = person.query.all()
         except Exception as e:
             return str(e)
         else:
-            return str(people)
+            return {"query":[p.to_json() for p in quotes]}
+
+@app.route("/articles", methods=["POST","GET"])
+def articles_fu():
+    from models import articles
+    from forms import ArticlesForm
+    if request.method == "POST":
+        form = ArticlesForm(request.form)
+        if form.validate():
+            articlessql = articles(**form.data)
+            db.session.add(articlessql)
+            db.session.commit()
+            return "adding!!!", 200
+        else:
+            return "Form is not valid!", 400 
+    else:
+        try:
+            quotes = articles.query.all()
+        except Exception as e:
+            return str(e)
+        else:
+            return {"query":[p.to_json() for p in quotes]}
         
 if __name__ == "__main__":
+    from models import *
     db.create_all()
-
     app.run()
