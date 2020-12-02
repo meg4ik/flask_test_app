@@ -10,43 +10,43 @@ except:
 
 db = SQLAlchemy(app)
 
-@app.route("/person", methods=["POST","GET"])
-def person_fu():
-    from models import person
-    from forms import PersonForm
+@app.route("/User", methods=["POST","GET"])
+def User_fu():
+    from models import User
+    from forms import UserForm
     if request.method == "POST":
-        form = PersonForm(request.form)
+        form = UserForm(request.form)
         if form.validate():
-            personsql = person(**form.data)
-            db.session.add(personsql)
+            usersql = User(**form.data)
+            db.session.add(usersql)
             db.session.commit()
             return "adding!!!", 200
         else:
             return "Form is not valid!", 400 
     else:
         try:
-            quotes = person.query.all()
+            quotes = User.query.all()
         except Exception as e:
             return str(e)
         else:
             return {"query":[p.to_json() for p in quotes]}
 
-@app.route("/articles", methods=["POST","GET"])
-def articles_fu():
-    from models import articles
-    from forms import ArticlesForm
+@app.route("/Post", methods=["POST","GET"])
+def Post_fu():
+    from models import Post
+    from forms import PostForm
     if request.method == "POST":
-        form = ArticlesForm(request.form)
+        form = PostForm(request.form)
         if form.validate():
-            articlessql = articles(**form.data)
-            db.session.add(articlessql)
+            postsql = Post(**form.data)
+            db.session.add(postsql)
             db.session.commit()
             return "adding!!!", 200
         else:
             return "Form is not valid!", 400 
     else:
         try:
-            quotes = articles.query.all()
+            quotes = Post.query.all()
         except Exception as e:
             return str(e)
         else:

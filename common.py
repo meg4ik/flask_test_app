@@ -7,5 +7,5 @@ DEBUG=True
 WTF_CSRF_ENABLED=False
 SECRET_KEY=secret_key
 
-SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:totalmag@localhost/testappdb'
+SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:totalmag@localhost/nexttest'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
