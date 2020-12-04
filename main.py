@@ -1,8 +1,8 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from simple_settings import settings
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates")
 try:
     app.config.update(**settings.as_dict())
 except:
@@ -29,7 +29,8 @@ def User_fu():
         except Exception as e:
             return str(e)
         else:
-            return {"query":[p.to_json() for p in quotes]}
+            return render_template('Take_Users_template.txt', quotes=quotes)
+            #return {"query":[p.to_json() for p in quotes]}
 
 @app.route("/Post", methods=["POST","GET"])
 def Post_fu():
